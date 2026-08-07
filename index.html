@@ -235,7 +235,11 @@
       <div id="houses">
         <section aria-label="The houses of the group" style="height:400vh" class="relative bg-ink">
           <div class="sticky top-0 h-screen overflow-hidden">
-            <div class="flex h-full will-change-transform" style="width:400%;transform:translate3d(-0vw, 0, 0)">
+            <div 
+              class="flex h-full will-change-transform" 
+              id="articles-container"
+              style="width:400%"
+            >
               <article class="relative flex h-full w-screen shrink-0 items-end overflow-hidden">
                 <img 
                   src="./Trilions Private Limited_files/retail-BfTmrML4.jpg" 
@@ -442,10 +446,6 @@
             At our core, we are a lifestyle ecosystem that uses smart technology to eliminate friction from your day.
           </p>
           <div class="rule-hair"></div>
-          
-        <a href="tel:+919611404630" class="transition-colors hover:text-foreground">
-          +91 9611 404630
-        </a>
         </div>
       </section>
 
@@ -453,10 +453,28 @@
         <span class="font-display text-base tracking-[0.3em] text-foreground">
           TRILIONS
         </span>
+        <a href="tel:+919611404630" class="transition-colors hover:text-foreground">
+          +91 9611 404630
+        </a>
         <span>
           © 2026 Trilions Private Limited
         </span>
       </footer>
     </main>
+
+    <script>
+      // Scroll animation for articles carousel
+      const housesSection = document.getElementById('houses');
+      const container = document.getElementById('articles-container');
+
+      window.addEventListener('scroll', () => {
+        const rect = housesSection.getBoundingClientRect();
+        const scrollPercent = Math.max(0, Math.min(1, -rect.top / (rect.height - window.innerHeight)));
+        
+        // Calculate the translation: slides from 0 to -75vw (3 articles to the left)
+        const translateX = -scrollPercent * 75;
+        container.style.transform = `translate3d(${translateX}vw, 0, 0)`;
+      });
+    </script>
   </body>
 </html>
