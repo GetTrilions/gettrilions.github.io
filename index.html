@@ -449,10 +449,7 @@
           <p class="text-sm leading-relaxed font-light text-muted-foreground">
             Contact Us
           </p>
-          <a 
-            href="tel:+919611404630" 
-            class="text-sm leading-relaxed font-light text-muted-foreground hover:text-foreground transition-colors"
-          >
+          <a href="tel:+919611404630" class="text-sm leading-relaxed font-light text-muted-foreground">
             +91 9611 404630
           </a>
         </div>
@@ -481,18 +478,25 @@
         const sectionHeight = sectionRect.height;
         const windowHeight = window.innerHeight;
 
-        // Calculate how far through the section we've scrolled
+        // Calculate how far through the section we've scrolled (0 to 1)
         const scrolled = -sectionTop;
         const scrollableDistance = sectionHeight - windowHeight;
         const scrollPercent = Math.max(0, Math.min(1, scrolled / scrollableDistance));
 
-        // Translate: each article is 100vw, so to show next article, translate by -100vw
-        const translateX = -scrollPercent * 300;
+        // Total translation needed: 3 articles * 100vw = 300vw
+        // But we need to convert to pixels based on viewport width
+        const articleWidth = window.innerWidth;
+        const totalTranslation = articleWidth * 3; // 3 articles worth of translation
+        const translateX = -scrollPercent * totalTranslation;
+        
         container.style.transform = `translate3d(${translateX}px, 0, 0)`;
       }
 
       window.addEventListener('scroll', updateScroll, { passive: true });
       window.addEventListener('resize', updateScroll);
+      
+      // Initial call
+      updateScroll();
     </script>
   </body>
 </html>
