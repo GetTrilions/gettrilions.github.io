@@ -200,6 +200,10 @@
           outline-width: 3px;
         }
       }
+
+      html {
+        scroll-behavior: smooth;
+      }
     </style>
   </head>
 
@@ -225,7 +229,7 @@
 
         <div class="flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
           <p class="max-w-sm text-sm leading-relaxed font-light text-sand/70">
-            We blend everyday lifestyle essentials with intuitive technology to solve modern complexities—creating seamless products, spaces, and experiences engineered for the way you live today, and the way you'll grow tomorrow.
+            We blend everyday lifestyle essentials with intuitive technology to solve modern complexities—creating seamless experiences engineered for the way you live today, and the way you'll grow tomorrow.
           </p>
           <div class="rule-hair hidden flex-1 md:block"></div>
           <span class="label-eyebrow text-sand/50">Scroll</span>
@@ -240,7 +244,7 @@
               id="articles-container"
               style="width:400%; transform: translate3d(0, 0, 0);"
             >
-              <article class="relative flex h-full w-screen shrink-0 items-end overflow-hidden">
+              <article class="relative flex h-full w-screen shrink-0 items-end overflow-hidden scroll-snap-align-start" data-article="0">
                 <img 
                   src="./Trilions Private Limited_files/retail-BfTmrML4.jpg" 
                   alt="Smart Essentials" 
@@ -286,7 +290,7 @@
                 </div>
               </article>
 
-              <article class="relative flex h-full w-screen shrink-0 items-end overflow-hidden">
+              <article class="relative flex h-full w-screen shrink-0 items-end overflow-hidden scroll-snap-align-start" data-article="1">
                 <img 
                   src="./Trilions Private Limited_files/restaurant-CJnm0vdz.jpg" 
                   alt="Intelligent Culinary" 
@@ -332,7 +336,7 @@
                 </div>
               </article>
 
-              <article class="relative flex h-full w-screen shrink-0 items-end overflow-hidden">
+              <article class="relative flex h-full w-screen shrink-0 items-end overflow-hidden scroll-snap-align-start" data-article="2">
                 <img 
                   src="./Trilions Private Limited_files/events-BN62buCe.jpg" 
                   alt="Connected Gatherings" 
@@ -378,7 +382,7 @@
                 </div>
               </article>
 
-              <article class="relative flex h-full w-screen shrink-0 items-end overflow-hidden">
+              <article class="relative flex h-full w-screen shrink-0 items-end overflow-hidden scroll-snap-align-start" data-article="3">
                 <img 
                   src="./Trilions Private Limited_files/resort-Cm2VywLd.jpg" 
                   alt="Intuitive Sanctuaries" 
@@ -466,9 +470,27 @@
     </main>
 
     <script>
-      // Scroll animation for articles carousel
+      // Scroll animation for articles carousel with snap scrolling
       const housesSection = document.getElementById('houses');
       const container = document.getElementById('articles-container');
+      let scrollTimeout;
+      let isScrolling = false;
+
+      function snapToArticle(articleIndex) {
+        if (articleIndex < 0 || articleIndex > 3) return;
+        
+        const articleWidth = window.innerWidth;
+        const totalTranslation = articleWidth * articleIndex;
+        const translateX = -totalTranslation;
+        
+        container.style.transition = 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+        container.style.transform = `translate3d(${translateX}px, 0, 0)`;
+        
+        setTimeout(() => {
+          container.style.transition = '';
+          isScrolling = false;
+        }, 600);
+      }
 
       function updateScroll() {
         if (!housesSection || !container) return;
@@ -483,13 +505,26 @@
         const scrollableDistance = sectionHeight - windowHeight;
         const scrollPercent = Math.max(0, Math.min(1, scrolled / scrollableDistance));
 
-        // Total translation needed: 3 articles * 100vw = 300vw
-        // But we need to convert to pixels based on viewport width
-        const articleWidth = window.innerWidth;
-        const totalTranslation = articleWidth * 3; // 3 articles worth of translation
-        const translateX = -scrollPercent * totalTranslation;
+        // Only update transform if not snapping
+        if (!isScrolling) {
+          const articleWidth = window.innerWidth;
+          const totalTranslation = articleWidth * 3;
+          const translateX = -scrollPercent * totalTranslation;
+          
+          container.style.transform = `translate3d(${translateX}px, 0, 0)`;
+        }
+
+        // Determine which article should be snapped to
+        const articleIndex = Math.round(scrollPercent * 3);
         
-        container.style.transform = `translate3d(${translateX}px, 0, 0)`;
+        // Clear previous timeout
+        clearTimeout(scrollTimeout);
+        
+        // Set timeout to snap after scrolling stops
+        scrollTimeout = setTimeout(() => {
+          isScrolling = true;
+          snapToArticle(articleIndex);
+        }, 150);
       }
 
       window.addEventListener('scroll', updateScroll, { passive: true });
