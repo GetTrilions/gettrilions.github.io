@@ -238,7 +238,7 @@
             <div 
               class="flex h-full will-change-transform" 
               id="articles-container"
-              style="width:400%"
+              style="width:400%; transform: translate3d(0, 0, 0);"
             >
               <article class="relative flex h-full w-screen shrink-0 items-end overflow-hidden">
                 <img 
@@ -446,6 +446,15 @@
             At our core, we are a lifestyle ecosystem that uses smart technology to eliminate friction from your day.
           </p>
           <div class="rule-hair"></div>
+          <p class="text-sm leading-relaxed font-light text-muted-foreground">
+            Contact Us
+          </p>
+          <a 
+            href="tel:+919611404630" 
+            class="text-sm leading-relaxed font-light text-muted-foreground hover:text-foreground transition-colors"
+          >
+            +91 9611 404630
+          </a>
         </div>
       </section>
 
@@ -453,9 +462,6 @@
         <span class="font-display text-base tracking-[0.3em] text-foreground">
           TRILIONS
         </span>
-        <a href="tel:+919611404630" class="transition-colors hover:text-foreground">
-          +91 9611 404630
-        </a>
         <span>
           © 2026 Trilions Private Limited
         </span>
@@ -467,14 +473,26 @@
       const housesSection = document.getElementById('houses');
       const container = document.getElementById('articles-container');
 
-      window.addEventListener('scroll', () => {
-        const rect = housesSection.getBoundingClientRect();
-        const scrollPercent = Math.max(0, Math.min(1, -rect.top / (rect.height - window.innerHeight)));
+      function updateScroll() {
+        if (!housesSection || !container) return;
         
-        // Calculate the translation: slides from 0 to -75vw (3 articles to the left)
-        const translateX = -scrollPercent * 75;
-        container.style.transform = `translate3d(${translateX}vw, 0, 0)`;
-      });
+        const sectionRect = housesSection.getBoundingClientRect();
+        const sectionTop = sectionRect.top;
+        const sectionHeight = sectionRect.height;
+        const windowHeight = window.innerHeight;
+
+        // Calculate how far through the section we've scrolled
+        const scrolled = -sectionTop;
+        const scrollableDistance = sectionHeight - windowHeight;
+        const scrollPercent = Math.max(0, Math.min(1, scrolled / scrollableDistance));
+
+        // Translate: each article is 100vw, so to show next article, translate by -100vw
+        const translateX = -scrollPercent * 300;
+        container.style.transform = `translate3d(${translateX}px, 0, 0)`;
+      }
+
+      window.addEventListener('scroll', updateScroll, { passive: true });
+      window.addEventListener('resize', updateScroll);
     </script>
   </body>
 </html>
